@@ -1,0 +1,6 @@
+{{ ansible_managed | comment }}
+
+Address = {{ tinc_hostname }}
+{% for subnet in tinc_subnets %}
+Subnet = {{ subnet }}
+{% endfor %}

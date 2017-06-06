@@ -1,0 +1,8 @@
+#!/bin/bash
+
+{{ ansible_managed | comment }}
+
+ip link set {{ tinc_interface }} up
+{% for addr in tinc_addresses %}
+ip address add {{ addr }} dev {{ tinc_interface }}
+{% endfor %}

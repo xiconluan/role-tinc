@@ -1,0 +1,8 @@
+#!/bin/bash
+
+{{ ansible_managed | comment }}
+
+ip link set {{ tinc_interface }} down
+{% for addr in tinc_addresses %}
+ip address delete {{ addr }} dev {{ tinc_interface }}
+{% endfor %}

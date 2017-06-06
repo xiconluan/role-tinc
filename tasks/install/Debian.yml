@@ -1,0 +1,7 @@
+---
+- name: install tinc
+  apt:
+    pkg: tinc
+    state: installed
+    install_recommends: no
+    update_cache: no

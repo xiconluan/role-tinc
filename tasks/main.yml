@@ -1,0 +1,5 @@
+---
+- include: tinc.yml
+  when: tinc_enabled
+  tags:
+    - tinc

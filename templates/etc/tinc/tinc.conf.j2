@@ -1,0 +1,9 @@
+{{ ansible_managed | comment }}
+
+Name = {{ tinc_node }}
+Interface = {{ tinc_interface }}
+Device = /dev/net/tun
+AddressFamily = {{ tinc_address_family }}
+{% for to in tinc_connect_to %}
+ConnectTo = {{ to }}
+{% endfor %}
