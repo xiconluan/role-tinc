@@ -3,6 +3,7 @@
   with_first_found:
     - "install/{{ ansible_distribution }}.{{ ansible_lsb.codename }}.yml"
     - "install/{{ ansible_distribution }}.yml"
+    - "install/default.yml"
   loop_control:
     loop_var: distro_installer
 
@@ -10,5 +11,6 @@
   with_first_found:
     - "configure/{{ ansible_distribution }}.{{ ansible_lsb.codename}}.yml"
     - "configure/{{ ansible_distribution }}.yml"
+    - "configure/default.yml"
   loop_control:
     loop_var: distro_configurator
