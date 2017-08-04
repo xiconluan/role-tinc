@@ -4,6 +4,7 @@ Name = {{ tinc_node }}
 Interface = {{ tinc_interface }}
 Device = /dev/net/tun
 AddressFamily = {{ tinc_address_family }}
+Port = {{ tinc_port }}
 {% for to in tinc_connect_to %}
 ConnectTo = {{ to }}
 {% endfor %}

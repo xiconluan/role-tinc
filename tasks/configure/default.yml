@@ -26,6 +26,12 @@
   with_items: [tinc-down, tinc-up]
   notify: restart tinc
 
+- name: deleting old hosts dir if requested
+  when: tinc_remove_old_hosts
+  file:
+    path: /etc/tinc/{{ tinc_interface }}/hosts
+    state: absent
+
 - name: ensure hosts directory
   file:
     path: /etc/tinc/{{ tinc_interface }}/hosts

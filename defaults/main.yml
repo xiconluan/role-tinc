@@ -2,8 +2,11 @@
 tinc_enabled: no
 tinc_node: "{{ inventory_hostname }}"
 tinc_hostname: "{{ inventory_hostname }}"
+tinc_port: 655
 tinc_node_filename: "{{ tinc_node | replace('.', '_') }}"   # dots (.) and dashes (-) break everything!
+tinc_remove_old_hosts: no
 tinc_subnets: []
+tinc_routes: []
 tinc_addresses: []
 tinc_interface: tinc
 tinc_address_family: ipv4
