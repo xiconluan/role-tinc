@@ -1,11 +1,6 @@
 ---
-- name: restart tinc
-  # This handler MUST NOT be executed during key roll-overs. In such cases all possibly existing keys will be removed
-  # before creating a new host-key for the current node. If the daemon is restarted at this point, it detaches from the
-  # Tinc network. After all nodes have created their new key, a separate play needs to distribute the new keys among the
-  # nodes and can restart tinc safely, afterwards.
-  when: not tinc_remove_old_hosts
-  service:
-    name: tinc@{{ tinc_interface }}
-    enabled: yes
-    state: restarted
+- name: reload systemd
+  when: ansible_service_mgr == "systemd"
+  systemd:
+    name: tinc
+    daemon_reload: yes

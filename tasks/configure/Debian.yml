@@ -14,7 +14,6 @@
     owner: root
     group: root
     mode: 0640
-  notify: restart tinc
 
 - name: deploy ifup/ifdown scripts for network
   template:
@@ -24,7 +23,6 @@
     group: root
     mode: 0750
   with_items: [tinc-down, tinc-up]
-  notify: restart tinc
 
 - name: deleting old hosts dir if requested
   when: tinc_remove_old_hosts
@@ -60,12 +58,10 @@
     group: root
     mode: 0640
   when: (not host_config_exists.stat.exists) or (host_config_check|failed)
-  notify: restart tinc
 
 - name: create key-pair
   command: tincd -n {{ tinc_interface }} -K4096
   when: (not host_config_exists.stat.exists) or (host_config_check|failed)
-  notify: restart tinc
 
 - name: auto-connect to network on startup
   lineinfile:
