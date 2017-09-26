@@ -1,0 +1,79 @@
+- name: deploy tinc@.service
+  copy:
+    src: etc/systemd/system/tinc@.service
+    dest: /etc/systemd/system/tinc@.service
+    owner: root
+    group: root
+    mode: 0755
+  notify: reload systemd
+
+- meta: flush_handlers
+
+- name: ensure configuration directory
+  file:
+    path: /etc/tinc/{{ tinc_interface }}
+    state: directory
+    owner: root
+    group: root
+    mode: 0750
+
+- name: configure tinc.conf
+  template:
+    src: etc/tinc/tinc.conf.j2
+    dest: /etc/tinc/{{ tinc_interface }}/tinc.conf
+    owner: root
+    group: root
+    mode: 0640
+
+- name: deploy ifup/ifdown scripts for network
+  template:
+    src: etc/tinc/{{ item }}.j2
+    dest: /etc/tinc/{{ tinc_interface }}/{{ item }}
+    owner: root
+    group: root
+    mode: 0750
+  with_items: [tinc-down, tinc-up]
+
+- name: deleting old hosts dir if requested
+  when: tinc_remove_old_hosts
+  file:
+    path: /etc/tinc/{{ tinc_interface }}/hosts
+    state: absent
+
+- name: ensure hosts directory
+  file:
+    path: /etc/tinc/{{ tinc_interface }}/hosts
+    state: directory
+    owner: root
+    group: root
+    mode: 0750
+
+- name: check if host config file exists
+  stat:
+    path: /etc/tinc/{{ tinc_interface }}/hosts/{{ tinc_node_filename }}
+  register: host_config_exists
+
+- name: check if host config has to be created
+  lineinfile:
+    path: /etc/tinc/{{ tinc_interface }}/hosts/{{ tinc_node_filename }}
+    line: '-----BEGIN RSA PUBLIC KEY-----'
+  when: host_config_exists.stat.exists
+  register: host_config_check
+
+- name: create hosts configurations
+  template:
+    src: etc/tinc/hosts.j2
+    dest: /etc/tinc/{{ tinc_interface }}/hosts/{{ tinc_node_filename }}
+    owner: root
+    group: root
+    mode: 0640
+  when: (not host_config_exists.stat.exists) or (host_config_check|failed)
+
+- name: create key-pair
+  command: tincd -n {{ tinc_interface }} -K4096
+  when: (not host_config_exists.stat.exists) or (host_config_check|failed)
+
+- name: auto-connect to network on startup
+  lineinfile:
+    path: /etc/tinc/nets.boot
+    line: "{{ tinc_interface }}"
