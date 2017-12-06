@@ -16,6 +16,45 @@ This role installs and configures the meshed VPN service tinc.
       - bar_example_com
   roles:
      - blunix.role-tinc
+  
+  ...
+```
+
+To avoid complexity, the role itself will **not** distribute keys between the nodes and also will **not** restart or
+reload the tinc daemon process. This needs to be taken care of in playbook-layer:
+
+```yaml
+  ...
+  post_tasks:
+    - name: cleanup fetch-bin to remove artifacts from previously failed runs
+      file:
+        path: /tmp/fetched/etc/tinc
+        state: absent
+      delegate_to: localhost
+    - name: download tinc configurations from all nodes
+      fetch:
+        src: /etc/tinc/{{ tinc_interface }}/hosts/{{ inventory_hostname_short }}
+        dest: /tmp/fetched/etc/tinc/{{ tinc_interface }}/hosts/{{ inventory_hostname_short }}
+        flat: yes
+        fail_on_missing: yes
+    - name: upload tinc configurations to all nodes
+      copy:
+        src: /tmp/fetched/etc/tinc/{{ tinc_interface }}/hosts
+        dest: /etc/tinc/{{ tinc_interface }}/
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart tinc
+    - name: cleanup fetch-bin to remove all artifacts for subsequent runs
+      file:
+        path: /tmp/fetched/etc/tinc
+        state: absent
+      delegate_to: localhost
+  handlers:
+    - name: restart tinc
+      service:
+        name: tinc@{{ tinc_interface }}
+        state: restarted
 ```
 
 # License
