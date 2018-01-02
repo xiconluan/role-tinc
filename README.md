@@ -16,7 +16,6 @@ This role installs and configures the meshed VPN service tinc.
       - bar_example_com
   roles:
      - blunix.role-tinc
-  
   ...
 ```
 
