@@ -13,15 +13,15 @@ platforms:
     interfaces:
       - network_name: private_network
         type: static
-        auto_config: False
-        ip: 10.99.0.1
+        auto_config: false
+        ip: 10.99.0.2
   - name: xenial
     box: bento/ubuntu-16.04
     interfaces:
       - network_name: private_network
         type: static
-        auto_config: False
-        ip: 10.99.0.2
+        auto_config: false
+        ip: 10.99.0.3
 provisioner:
   name: ansible
   connection_options:

@@ -3,8 +3,8 @@
 {{ ansible_managed | comment }}
 
 ip link set {{ tinc_interface }} down
-{% for addr in tinc_addresses %}
-ip address delete {{ addr }} dev {{ tinc_interface }}
+{% for addr in tinc_subnets %}
+ip address delete {{ addr.split('/')[0] + '/24' }} dev {{ tinc_interface }}
 {% endfor %}
 
 {% for route in tinc_routes %}

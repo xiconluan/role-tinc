@@ -2,6 +2,6 @@
 - name: install tinc
   apt:
     pkg: tinc
-    state: installed
+    state: present
     install_recommends: no
     update_cache: no
