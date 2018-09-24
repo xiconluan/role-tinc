@@ -1,13 +1,22 @@
 ---
-tinc_enabled: no
-tinc_node: "{{ inventory_hostname }}"
-tinc_hostname: "{{ inventory_hostname }}"
-tinc_port: 655
-tinc_node_filename: "{{ tinc_node | replace('.', '_') }}"   # dots (.) and dashes (-) break everything!
+# tinc_remove_old_hosts allows for complete roll-over off all nodes' keys.
 tinc_remove_old_hosts: no
-tinc_subnets: []
-tinc_routes: []
-tinc_addresses: []
+
 tinc_interface: tinc
 tinc_address_family: ipv4
 tinc_connect_to: []
+
+# tinc_node is how tinc names the node in its configs and hosts files (must not contain dots!).
+tinc_node: "{{ inventory_hostname }}"
+
+# tinc_hostname is the DNS hostname (or IP address) that tinc nodes connect on with each other.
+tinc_hostname: "{{ ansible_default_ipv4.address }}"
+
+# tinc_port is the port the tinc nodes connect on when connecting with each other.
+tinc_port: 655
+
+# tinc_subnets contains a list of this node's tinc subnets in CIDR notation.
+tinc_subnets: []
+
+# tinc_routes is an optional list of routes to configure once tinc starts.
+tinc_routes: []

@@ -3,5 +3,5 @@
 Address = {{ tinc_hostname }}
 Port = {{ tinc_port }}
 {% for subnet in tinc_subnets %}
-Subnet = {{ subnet }}
+Subnet = {{ subnet.address }}/{{ subnet.tinc_net | default("32") }}
 {% endfor %}

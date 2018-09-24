@@ -1,4 +1,15 @@
----
+- name: deploy tinc@.service
+  when: ansible_distribution == "Ubuntu"
+  copy:
+    src: etc/systemd/system/tinc@.service
+    dest: /etc/systemd/system/tinc@.service
+    owner: root
+    group: root
+    mode: 0755
+  notify: reload systemd
+
+- meta: flush_handlers
+
 - name: ensure configuration directory
   file:
     path: /etc/tinc/{{ tinc_interface }}
@@ -40,12 +51,12 @@
 
 - name: check if host config file exists
   stat:
-    path: /etc/tinc/{{ tinc_interface }}/hosts/{{ tinc_node_filename }}
+    path: /etc/tinc/{{ tinc_interface }}/hosts/{{ tinc_node }}
   register: host_config_exists
 
 - name: check if host config has to be created
   lineinfile:
-    path: /etc/tinc/{{ tinc_interface }}/hosts/{{ tinc_node_filename }}
+    path: /etc/tinc/{{ tinc_interface }}/hosts/{{ tinc_node }}
     line: '-----BEGIN RSA PUBLIC KEY-----'
   when: host_config_exists.stat.exists
   register: host_config_check
@@ -53,15 +64,15 @@
 - name: create hosts configurations
   template:
     src: etc/tinc/hosts.j2
-    dest: /etc/tinc/{{ tinc_interface }}/hosts/{{ tinc_node_filename }}
+    dest: /etc/tinc/{{ tinc_interface }}/hosts/{{ tinc_node }}
     owner: root
     group: root
     mode: 0640
-  when: (not host_config_exists.stat.exists) or (host_config_check|failed)
+  when: (not host_config_exists.stat.exists) or (host_config_check is failed)
 
 - name: create key-pair
   command: tincd -n {{ tinc_interface }} -K4096
-  when: (not host_config_exists.stat.exists) or (host_config_check|failed)
+  when: (not host_config_exists.stat.exists) or (host_config_check is failed)
 
 - name: auto-connect to network on startup
   lineinfile:
