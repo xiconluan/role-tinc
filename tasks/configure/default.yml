@@ -10,6 +10,12 @@
 
 - meta: flush_handlers
 
+- name: make sure the tinc systemd service starts at boot
+  when: ansible_service_mgr == "systemd"
+  systemd:
+    name: "tinc@{{ tinc_interface }}"
+    enabled: yes
+
 - name: ensure configuration directory
   file:
     path: /etc/tinc/{{ tinc_interface }}
