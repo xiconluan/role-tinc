@@ -10,6 +10,11 @@
 
 - meta: flush_handlers
 
+- name: ensuring tinc is enabled and thus reboot-safe
+  service:
+    name: "tinc@{{ tinc_interface }}"
+    enabled: yes
+
 - name: ensure configuration directory
   file:
     path: /etc/tinc/{{ tinc_interface }}
